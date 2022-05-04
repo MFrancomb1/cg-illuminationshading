@@ -60,7 +60,7 @@ class GlApp {
     loadAllShaders(shaders) {
         this.shader.gouraud_color = this.createShaderProgram(shaders[0], shaders[1]);
         this.shader.gouraud_texture = this.createShaderProgram(shaders[2], shaders[3]);
-        this.shader.phong_color = this.createShaderProgram(shaders[4], shaders[5]);
+        this.shader.phone_color = this.createShaderProgram(shaders[4], shaders[5]);
         this.shader.phone_texture = this.createShaderProgram(shaders[6], shaders[7]);
         this.shader.emissive = this.createShaderProgram(shaders[8], shaders[9]);
 
@@ -159,7 +159,7 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = 'emissive';
+            let selected_shader = 'gouraud';
             this.gl.useProgram(this.shader[selected_shader].program);
 
             // transform model to proper position, size, and orientation
