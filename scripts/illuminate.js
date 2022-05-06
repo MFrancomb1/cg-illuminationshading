@@ -61,7 +61,7 @@ class GlApp {
         this.shader.gouraud_color = this.createShaderProgram(shaders[0], shaders[1]);
         this.shader.gouraud_texture = this.createShaderProgram(shaders[2], shaders[3]);
         this.shader.phong_color = this.createShaderProgram(shaders[4], shaders[5]);
-        this.shader.phone_texture = this.createShaderProgram(shaders[6], shaders[7]);
+        this.shader.phong_texture = this.createShaderProgram(shaders[6], shaders[7]);
         this.shader.emissive = this.createShaderProgram(shaders[8], shaders[9]);
 
         this.initializeGlApp();
@@ -159,9 +159,12 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = 'emissive';
+            let selected_shader = this.algorithm+"_color";
+            if(this.algorithm === "emissive") {
+                selected_shader = "emissive";
+            }
             this.gl.useProgram(this.shader[selected_shader].program);
-
+            
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.models[i].center);
@@ -169,19 +172,45 @@ class GlApp {
             glMatrix.mat4.rotateY(this.model_matrix, this.model_matrix, this.scene.models[i].rotate_y);
             glMatrix.mat4.rotateX(this.model_matrix, this.model_matrix, this.scene.models[i].rotate_x);
             glMatrix.mat4.scale(this.model_matrix, this.model_matrix, this.scene.models[i].size);
-
+            
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_color, this.scene.models[i].material.color);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
+
+
+            //set shader uniform values for camera_position, light_ambient, light_position, light_color, material_shininess, material_specular 
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[0].position);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[0].color);
+            this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
             
             //
             // TODO: bind proper texture and set uniform (if shader is a textured one)
             //
-
+            
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
             this.gl.bindVertexArray(null);
+
+            //logging info for debugging
+            console.log(selected_shader);
+            console.log(this.shader[selected_shader].uniforms);
+            const numAttribs = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_ATTRIBUTES);
+            console.log("Atrtibutes:");
+            for(let i=0; i < numAttribs; i++) {
+                const a = this.gl.getActiveAttrib(this.shader[selected_shader].program, i);
+                console.log(i, a.size, a.type, a.name);
+            }
+            console.log("UNIFORMS:");
+            const numUniforms = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_UNIFORMS);
+            for (let i = 0; i < numUniforms; ++i) {
+                const info = this.gl.getActiveUniform(this.shader[selected_shader].program, i);
+                 console.log('name:', info.name, 'type:', info.type, 'size:', info.size);
+            }
+
         }
 
         // draw all light sources
