@@ -13,6 +13,10 @@ out vec3 frag_pos;
 out vec3 frag_normal;
 
 void main() {
+    //transform vertex position and vertex normals into world space to be used in fragment shader lighting equations
+    frag_pos = vec3(model_matrix * vec4(vertex_position, 1.0));
+    frag_normal = normalize(inverse(transpose(mat3(model_matrix)))*vertex_normal);
+
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertex_position, 1.0);
     
 }

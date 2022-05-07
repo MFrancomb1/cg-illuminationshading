@@ -32,8 +32,8 @@ void main() {
 
     //lighting equations
     ambient = light_ambient; // I=Ia*Ka
-    diffuse += light_color * dot(world_v_normal, light_direction);  // I=Ip*Kd(N dot L)
-    specular += light_color * pow(dot(reflected_direction, view_direction), material_shininess);  // I=Ip*Ks(R dot V)^n
+    diffuse = light_color * dot(world_v_normal, light_direction);  // I=Ip*Kd(N dot L)
+    specular = light_color * pow(dot(reflected_direction, view_direction), material_shininess);  // I=Ip*Ks(R dot V)^n
 
     //constrain each value so that it is between 0.0 and 1.0
     diffuse = clamp(diffuse, 0.0, 1.0);
