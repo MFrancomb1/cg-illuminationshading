@@ -18,7 +18,8 @@ void main() {
     vec3 dif = material_color * diffuse;
     vec3 spec = material_specular * specular;
 
-    FragColor = vec4(amb + dif + spec, 1.0);
+    vec4 light = vec4(amb + dif + spec, 1.0);
 
-    FragColor = texture(image, frag_texcoord);
+    //need to add lighting to the FragColor. addition did not work, multiplication seems to be fine.
+    FragColor = texture(image, frag_texcoord) * light;
 }
