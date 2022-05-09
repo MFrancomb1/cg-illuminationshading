@@ -33,7 +33,7 @@
                 "url": "images/World_Map.jpg",
                 "scale": [1, 1]
             },
-            "center": [0.0, 1.0, -3.0],
+            "center": [0.0, 3.5, 0.0],
             "size": [2.0, 2.0, 2.0]
         },
         {
@@ -48,7 +48,22 @@
                 "url": "images/World_Map.jpg",
                 "scale": [1, 1]
             },
-            "center": [2.0, 1.5, 1.0],
+            "center": [0.0, 1.5, 1.5],
+            "size": [1.0, 1.0, 1.0]
+        },
+        {
+            "type": "sphere",
+            "shader": "color",
+            "material": {
+                "color": [0.9, 0.6, 0.0],
+                "specular": [1.0, 1.0, 1.0],
+                "shininess": 32
+            },
+            "texture": {
+                "url": "images/World_Map.jpg",
+                "scale": [1, 1]
+            },
+            "center": [2.0, 2.5, 0.0],
             "size": [1.0, 1.0, 1.0]
         }
     ],
@@ -65,6 +80,10 @@
             },
             {
                 "position": [-5.0, 1.5, 1.5],
+                "color": [1.0, 1.0, 1.0]
+            },
+            {
+                "position": [0.0, 0.2, 1.5],
                 "color": [1.0, 1.0, 1.0]
             }
         ]
