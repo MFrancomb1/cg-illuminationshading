@@ -129,6 +129,15 @@ class GlApp {
         //
         // TODO: set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
         // 
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        // code from powerpoint slides & in class demo.
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT); //horizontal.
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT); //vertical.
+        let pixel = [255, 255, 255, 255];
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(pixel));
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
 
         // download the actual image
         let image = new Image();
@@ -146,6 +155,11 @@ class GlApp {
         //
         // TODO: update image for specified texture
         //
+
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+        
     }
 
     render() {
@@ -159,7 +173,7 @@ class GlApp {
             //
             // TODO: properly select shader here
             //
-            let selected_shader = this.algorithm+"_color";
+            let selected_shader = this.algorithm+"_"+this.scene.models[i].shader;
             if(this.algorithm === "emissive") {
                 selected_shader = "emissive";
             }
@@ -178,11 +192,10 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
 
-
             //set shader uniform values for camera_position, light_ambient, light_position, light_color, material_shininess, material_specular 
-            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[0].position);
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[0].color);
+            this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
             this.gl.uniform1f(this.shader[selected_shader].uniforms.material_shininess, this.scene.models[i].material.shininess);
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.material_specular, this.scene.models[i].material.specular);
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.camera_position, this.scene.camera.position);
@@ -190,26 +203,39 @@ class GlApp {
             //
             // TODO: bind proper texture and set uniform (if shader is a textured one)
             //
+            if(this.scene.models[i].shader == "texture") {
+                //shader is textured, bind texture.
+                this.gl.activeTexture(this.gl.TEXTURE0);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+
+                //set shader uniform values for texture_scale and image to be sent to shaders
+                this.gl.uniform2fv(this.shader[selected_shader].uniforms.texture_scale, this.scene.models[i].texture.scale);
+                this.gl.uniform1i(this.shader[selected_shader].uniforms.image, 0) // 0 should match the active texture.
+            }
             
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
+            // unbind vertex array and texture
+            this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             this.gl.bindVertexArray(null);
 
             //logging info for debugging
+            console.log(this.gl.getError());
+            //console.log(this.scene.models[i].texture);
             console.log(selected_shader);
-            console.log(this.shader[selected_shader].uniforms);
-            const numAttribs = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_ATTRIBUTES);
-            console.log("Atrtibutes:");
-            for(let i=0; i < numAttribs; i++) {
-                const a = this.gl.getActiveAttrib(this.shader[selected_shader].program, i);
-                console.log(i, a.size, a.type, a.name);
-            }
-            console.log("UNIFORMS:");
-            const numUniforms = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_UNIFORMS);
-            for (let i = 0; i < numUniforms; ++i) {
-                const info = this.gl.getActiveUniform(this.shader[selected_shader].program, i);
-                 console.log('name:', info.name, 'type:', info.type, 'size:', info.size);
-            }
+            // console.log(this.shader[selected_shader].uniforms);
+            // const numAttribs = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_ATTRIBUTES);
+            // console.log("Atrtibutes:");
+            // for(let i=0; i < numAttribs; i++) {
+            //     const a = this.gl.getActiveAttrib(this.shader[selected_shader].program, i);
+            //     console.log(i, a.size, a.type, a.name);
+            // }
+            // console.log("UNIFORMS:");
+            // const numUniforms = this.gl.getProgramParameter(this.shader[selected_shader].program, this.gl.ACTIVE_UNIFORMS);
+            // for (let i = 0; i < numUniforms; ++i) {
+            //     const info = this.gl.getActiveUniform(this.shader[selected_shader].program, i);
+            //      console.log('name:', info.name, 'type:', info.type, 'size:', info.size);
+            // }
 
         }
 
