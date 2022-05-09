@@ -13,16 +13,34 @@ function init() {
                 },
                 models: [
                     {
+                        type: 'sphere',
+                        shader: 'texture',
+                        material: {
+                            color: vec3.fromValues(0.5, 0.5, 0.7),  // red, green, blue
+                            specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            shininess: 15
+                        },
+                        texture: {
+                            url: "images/World_Map.jpg",
+                            scale: [1, 1]
+                        },
+                        center: vec3.fromValues(0.0, 4, -15.0), // x, y, z
+                        size: vec3.fromValues(3.0, 3.0, 3.0),  // width, height, depth
+                        rotate_x: 180,
+                        rotate_y: 0,
+                        rotate_z: 0
+                    },
+                    {
                         type: 'plane',
                         shader: 'texture',
                         material: {
-                            color: vec3.fromValues(0.7, 0.1, 0.1),  // red, green, blue
+                            color: vec3.fromValues(0.33, 0.49, 0.27),  // red, green, blue
                             specular: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                             shininess: 1
                         },
                         // texture attribute holding the image url and scale
                         texture: {
-                            url: "images/Checkered.jpg",
+                            url: "images/grass.jpg",
                             scale: [4, 4]
 
                         },
@@ -34,16 +52,56 @@ function init() {
                     },
                     {
                         type: 'custom',
-                        shader: 'color',
+                        shader: 'texture',
                         material: {
-                            color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
+                            color: vec3.fromValues(0.73, 0.55, 0.39),  // red, green, blue
                             specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
                             shininess: 32
                         },
-                        center: vec3.fromValues(0.0, 1.0, -6.0), // x, y, z
+                        texture: {
+                            url: "images/wood.jpg",
+                            scale: [1, 1]
+                        },
+                        center: vec3.fromValues(2.0, 1.0, -10.0), // x, y, z
                         size: vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth
                         rotate_x: 0,
-                        rotate_y: 0,
+                        rotate_y: 90,
+                        rotate_z: 0
+                    },
+                    {
+                        type: 'sphere',
+                        shader: 'texture',
+                        material: {
+                            color: vec3.fromValues(0.93, 0.4, 0.19),  // red, green, blue
+                            specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            shininess: 15
+                        },
+                        texture: {
+                            url: "images/basketball.jpg",
+                            scale: [1, 1]
+                        },
+                        center: vec3.fromValues(-1.0, 1.0, -7.0), // x, y, z
+                        size: vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth
+                        rotate_x: 0,
+                        rotate_y: 90,
+                        rotate_z: 0
+                    },
+                    {
+                        type: 'sphere',
+                        shader: 'texture',
+                        material: {
+                            color: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
+                            shininess: 15
+                        },
+                        texture: {
+                            url: "images/baseball.jpg",
+                            scale: [1, 1]
+                        },
+                        center: vec3.fromValues(1.0, 0.5, -5.0), // x, y, z
+                        size: vec3.fromValues(1.0, 1.0, 1.0),  // width, height, depth
+                        rotate_x: 0,
+                        rotate_y: 90,
                         rotate_z: 0
                     }
                 ],
